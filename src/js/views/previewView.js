@@ -27,7 +27,7 @@ export default class PreviewView extends View {
           </svg>
         </div>
 				
-				<div class="preview__user-generated${recipe.key ? '' : 'hidden'}">
+				<div class="preview__user-generated ${recipe.key ? '' : 'hidden'}">
 					<svg>
 						<use href="${this._icons}#icon-user"></use>
 					</svg>
