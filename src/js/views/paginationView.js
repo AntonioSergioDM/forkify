@@ -18,12 +18,12 @@ class PaginationView extends View {
     const btnMarkup = function (
       type = 'next',
       goto = this._data.page + 1,
-      direction = 'right'
+      img = `${this._icons}#icon-arrow-right`
     ) {
       return `
         <button class="btn--inline pagination__btn--${type}" data-goto="${goto}">
           <svg class="search__icon">
-            <use href="${this._icons}#icon-arrow-${direction}"></use>
+            <use href="${img}"></use>
           </svg>
           <span>Page ${goto}</span>
         </button>
@@ -38,11 +38,20 @@ class PaginationView extends View {
     let markup = '';
 
     // Prev Page Btn - Page 2, 3, ...
-    if (currPage > 1) markup += btnMarkup('prev', currPage - 1, 'left');
+    if (currPage > 1)
+      markup += btnMarkup(
+        'prev',
+        currPage - 1,
+        `${this._icons}#icon-arrow-left`
+      );
 
     // Next Page Btn - Page 1 if there are other pages, 2, ..., numPages-1
     if (currPage < numPages && numPages > 1)
-      markup += btnMarkup('next', currPage + 1, 'right');
+      markup += btnMarkup(
+        'next',
+        currPage + 1,
+        `${this._icons}#icon-arrow-right`
+      );
 
     return markup;
   }
