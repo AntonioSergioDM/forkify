@@ -114,7 +114,7 @@ class AddRecipeView extends View {
 
       <button class="btn upload__btn">
         <svg>
-          <use href="src/img/icons.svg#icon-upload-cloud"></use>
+          <use href="${this._icons}#icon-upload-cloud"></use>
         </svg>
         <span>Upload</span>
       </button>
