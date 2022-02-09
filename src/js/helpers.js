@@ -67,3 +67,11 @@ export const numberToFraction = function (amount) {
   }
   return amount;
 };
+
+export const maxOf = function (...arr) {
+  return arr.reduce((max, val) => (max > val ? max : val));
+};
+
+export const minOf = function (...arr) {
+  return arr.reduce((min, val) => (min < val ? min : val));
+};
