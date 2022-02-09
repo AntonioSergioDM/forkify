@@ -22,10 +22,11 @@ class PaginationView extends View {
     ) {
       return `
         <button class="btn--inline pagination__btn--${type}" data-goto="${goto}">
+        ${type === 'next' ? `<span>Page ${goto}</span>` : ''}
           <svg class="search__icon">
             <use href="${img}"></use>
           </svg>
-          <span>Page ${goto}</span>
+        ${type === 'prev' ? `<span>Page ${goto}</span>` : ''}
         </button>
       `;
     };
