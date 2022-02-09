@@ -1,6 +1,10 @@
 import { API_KEY, API_URL, RES_PER_PAGE } from './config';
 import { AJAX } from './helpers';
 
+// https://forkify-api.herokuapp.com/v2
+
+///////////////////////////////////
+
 export const state = {
   recipe: {},
   search: {
@@ -56,8 +60,6 @@ export const loadSearchResults = async function (query) {
         ...(recipe.key && { key: recipe.key }),
       };
     });
-
-    // console.log(state.search.results);
   } catch (err) {
     console.error(`${err} in loadSearchResults (model.js)`);
     throw err;
@@ -96,6 +98,7 @@ export const addBookmark = function (recipe) {
   state.search.results.forEach(res => {
     if (res.id === recipe.id) res.bookmarked = true;
   });
+
   // 3. Persist data
   persistBookmarks();
 };

@@ -7,11 +7,13 @@ import icons from 'url:../../img/icons.svg';
  */
 export default class View {
   _data;
+
   /**
    * Path to icons - because of parcel
    * @protected
    */
   _icons = icons;
+
   // Default messages - to be overwrite in the children classes
   _errorMessage = 'Something went wrong :(';
   _message = 'It worked :)';

@@ -15,8 +15,22 @@ class PaginationView extends View {
   }
 
   _generateMarkup() {
-    const currPage = this._data.page;
+    const btnMarkup = function (
+      type = 'next',
+      goto = this._data.page + 1,
+      direction = 'right'
+    ) {
+      return `
+        <button class="btn--inline pagination__btn--${type}" data-goto="${goto}">
+          <svg class="search__icon">
+            <use href="${this._icons}#icon-arrow-${direction}"></use>
+          </svg>
+          <span>Page ${goto}</span>
+        </button>
+      `;
+    };
 
+    const currPage = this._data.page;
     const numPages = Math.ceil(
       this._data.results.length / this._data.resultsPerPage
     );
@@ -24,25 +38,11 @@ class PaginationView extends View {
     let markup = '';
 
     // Prev Page Btn - Page 2, 3, ...
-    if (currPage > 1)
-      markup += `
-		<button class="btn--inline pagination__btn--prev" data-goto="${currPage - 1}">
-				<svg class="search__icon">
-					<use href="${this._icons}#icon-arrow-left"></use>
-				</svg>
-				<span>Page ${currPage - 1}</span>
-			</button>`;
+    if (currPage > 1) markup += btnMarkup('prev', currPage - 1, 'left');
 
     // Next Page Btn - Page 1 if there are other pages, 2, ..., numPages-1
     if (currPage < numPages && numPages > 1)
-      markup += `
-			<button class="btn--inline pagination__btn--next" data-goto="${currPage + 1}">
-				<span>Page ${currPage + 1}</span>
-				<svg class="search__icon">
-					<use href="${this._icons}#icon-arrow-right"></use>
-				</svg>
-			</button>
-      `;
+      markup += btnMarkup('next', currPage + 1, 'right');
 
     return markup;
   }

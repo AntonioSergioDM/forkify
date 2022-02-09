@@ -1,6 +1,5 @@
 import View from './View';
 
-// import { Fraction } from 'fractional';
 import { numberToFraction } from '../helpers';
 
 class RecipeView extends View {
@@ -140,31 +139,6 @@ class RecipeView extends View {
       </li>
     `;
   }
-
-  /*
-  _fractionString(qt) {
-    const getFactor = function (num) {
-      if (num <= 0.06) return new Fraction(0);
-      if (0.06 <= num && num <= 0.14) return new Fraction(1, 8);
-      if (0.14 <= num && num <= 0.21) return new Fraction(1, 6);
-      if (0.21 <= num && num <= 0.29) return new Fraction(1, 4);
-      if (0.29 <= num && num <= 0.36) return new Fraction(1, 3);
-      if (0.36 <= num && num <= 0.44) return new Fraction(3, 8);
-      if (0.44 <= num && num <= 0.56) return new Fraction(1, 2);
-      if (0.56 <= num && num <= 0.64) return new Fraction(5, 8);
-      if (0.64 <= num && num <= 0.7) return new Fraction(2, 3);
-      if (0.7 <= num && num <= 0.8) return new Fraction(3, 4);
-      if (0.8 <= num && num <= 0.85) return new Fraction(5, 6);
-      if (0.85 <= num && num <= 0.94) return new Fraction(7, 8);
-      if (0.94 <= num) return new Fraction(1);
-    };
-
-    const fraction = getFactor(qt % 1);
-    const qtTrunc = Math.trunc(qt);
-
-    return fraction.add(qtTrunc).toString();
-  }
-  */
 }
 
 export default new RecipeView();

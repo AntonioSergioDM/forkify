@@ -35,50 +35,6 @@ export const AJAX = async function (url, uploadData = undefined) {
     throw err;
   }
 };
-/*
-export const getJSON = async function (url) {
-  try {
-    const response = await Promise.race([fetch(url), timeout(TIMEOUT_SEC)]);
-    const data = await response.json();
-
-    if (!response.ok)
-      throw new Error(
-        `${data.message || 'Failed to retrieve the recipe'} (${
-          response.status
-        } ${response.statusText})`
-      );
-
-    return data;
-  } catch (err) {
-    throw err;
-  }
-};
-
-export const sendJSON = async function (url, uploadData) {
-  try {
-    const fetchPro = fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(uploadData),
-    });
-    const response = await Promise.race([fetchPro, timeout(TIMEOUT_SEC)]);
-    const data = await response.json();
-
-    if (!response.ok)
-      throw new Error(
-        `${data.message || 'Failed to retrieve the recipe'} (${
-          response.status
-        } ${response.statusText})`
-      );
-
-    return data;
-  } catch (err) {
-    throw err;
-  }
-};
-*/
 
 export const numberToFraction = function (amount) {
   // This is a whole number and doesn't need modification.

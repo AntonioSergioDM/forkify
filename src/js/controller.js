@@ -2,7 +2,7 @@
 import 'core-js/stable';
 import 'regenerator-runtime/runtime';
 
-// import the model
+// import the model and views
 import * as model from './model';
 import recipeView from './views/recipeView';
 import searchView from './views/searchView';
@@ -10,16 +10,9 @@ import resultsView from './views/resultsView';
 import paginationView from './views/paginationView';
 import bookmarksView from './views/bookmarksView';
 import addRecipeView from './views/addRecipeView';
+
+// import constants
 import { MODAL_CLOSE_SEC } from './config';
-
-import { timeout } from './helpers';
-
-// if (module.hot) {
-//   module.hot.accept();
-// }
-
-// https://forkify-api.herokuapp.com/v2
-// API key: 831339e4-3a70-4ef6-9ec3-7b814fd49e11
 
 ///////////////////////////////////////
 
@@ -80,7 +73,6 @@ const controlServings = function (servings) {
   model.updateServings(servings);
 
   // 2. Update the recipe view
-  // recipeView.render(model.state.recipe);
   recipeView.update(model.state.recipe);
 };
 
@@ -131,10 +123,6 @@ const controlAddRecipe = async function (newRecipe) {
   }
 };
 
-const newFeature = function () {
-  console.log('Welcome to the application!');
-};
-
 const init = function () {
   // Handlers
   recipeView.addHandlerRender(controlRecipes);
@@ -146,9 +134,5 @@ const init = function () {
 
   // Render Bookmarks locally storaged
   bookmarksView.render(model.state.bookmarks);
-
-  // New Feature - trying git
-  newFeature();
 };
 init();
-console.log('welcome');

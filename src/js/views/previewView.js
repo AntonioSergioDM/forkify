@@ -26,16 +26,12 @@ export default class PreviewView extends View {
             <use href="${this._icons}#icon-bookmark-fill"></use>
           </svg>
         </div>
-				${
-          recipe.key
-            ? `
-				<div class="preview__user-generated">
+				
+				<div class="preview__user-generated${recipe.key ? '' : 'hidden'}">
 					<svg>
 						<use href="${this._icons}#icon-user"></use>
 					</svg>
-				</div>`
-            : ''
-        }
+				</div>
 			</div>
 		</a>
 	</li> 
