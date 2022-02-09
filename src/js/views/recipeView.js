@@ -1,6 +1,7 @@
 import View from './View';
 
-import { Fraction } from 'fractional';
+// import { Fraction } from 'fractional';
+import { numberToFraction } from '../helpers';
 
 class RecipeView extends View {
   _parentElement = document.querySelector('.recipe');
@@ -130,7 +131,7 @@ class RecipeView extends View {
           <use href="${this._icons}#icon-check"></use>
         </svg>
         <div class="recipe__quantity">${
-          ing.quantity ? this._fractionString(ing.quantity) : ''
+          ing.quantity ? numberToFraction(ing.quantity) : ''
         }</div>
         <div class="recipe__description">
             <span class="recipe__unit">${ing.unit}</span>
@@ -140,6 +141,7 @@ class RecipeView extends View {
     `;
   }
 
+  /*
   _fractionString(qt) {
     const getFactor = function (num) {
       if (num <= 0.06) return new Fraction(0);
@@ -162,6 +164,7 @@ class RecipeView extends View {
 
     return fraction.add(qtTrunc).toString();
   }
+  */
 }
 
 export default new RecipeView();
