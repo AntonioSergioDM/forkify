@@ -131,6 +131,10 @@ const controlAddRecipe = async function (newRecipe) {
   }
 };
 
+const newFeature = function () {
+  console.log('Welcome to the application!');
+};
+
 const init = function () {
   // Handlers
   recipeView.addHandlerRender(controlRecipes);
@@ -140,8 +144,11 @@ const init = function () {
   paginationView.addHandlerClick(controlPagination);
   addRecipeView.addHandlerUpload(controlAddRecipe);
 
-  // Render bookmarks
+  // Render Bookmarks locally storaged
   bookmarksView.render(model.state.bookmarks);
+
+  // New Feature - trying git
+  newFeature();
 };
 init();
 console.log('welcome');
