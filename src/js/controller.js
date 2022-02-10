@@ -134,5 +134,6 @@ const init = function () {
 
   // Render Bookmarks locally storaged
   bookmarksView.render(model.state.bookmarks);
+  addRecipeView.render();
 };
 init();

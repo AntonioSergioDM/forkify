@@ -17,6 +17,7 @@ class AddRecipeView extends View {
     super();
     this._addHandlerShowWindow();
     this._addHandlerHideWindow();
+    this._addHandlerAddIng();
   }
 
   _addHandlerShowWindow() {
@@ -29,6 +30,44 @@ class AddRecipeView extends View {
     );
   }
 
+  _addHandlerAddIng() {
+    this._parentElement.addEventListener(
+      'click',
+      function (e) {
+        const btn = e.target.closest('.upload__ing--btn');
+
+        if (!btn) return;
+
+        this._getData();
+
+        const ingList = e.target.closest('.upload__column');
+
+        ingList.innerHTML = '';
+        ingList.insertAdjacentHTML(
+          'afterbegin',
+          `
+      ${
+        this._data.err
+          ? this._generateMarkupIngs('Incorrect Format')
+          : this._generateMarkupIngs()
+      } 
+      ${this._generateMarkupAddIngBtn()}
+      `
+        );
+
+        if (this._data.err) {
+          this._getData();
+          setTimeout(
+            function () {
+              this.update(this._data);
+            }.bind(this),
+            MODAL_CLOSE_SEC * 1000
+          );
+        }
+      }.bind(this)
+    );
+  }
+
   addHandlerUpload(handler) {
     this._parentElement.addEventListener(
       'submit',
@@ -38,6 +77,7 @@ class AddRecipeView extends View {
         // Get Data
         this._getData();
 
+        // Data validation
         if (!this._isDataValid()) {
           this.renderError(this._data.err);
           // Regenerate Form
@@ -102,7 +142,7 @@ class AddRecipeView extends View {
 
         const [quantity = null, unit, description] = ingArr;
         data.ingredients.push({
-          quantity: quantity ? +quantity : null,
+          quantity: +quantity ? +quantity : null,
           unit,
           description,
         });
@@ -133,7 +173,7 @@ class AddRecipeView extends View {
   }
 
   _generateMarkup() {
-    return `
+    let markup = `
     
     <h3 class="upload__heading">Recipe data</h3>
     <h3 class="upload__heading">Ingredients</h3>
@@ -158,7 +198,7 @@ class AddRecipeView extends View {
         <input 
           required 
           value="${this._data.image || ''}" 
-          name="sourceUrl" 
+          name="image" 
           type="text" 
           placeholder="https://forkify-antoniosergio.netlify.app/logo.8a7af738.png" 
         />
@@ -189,73 +229,8 @@ class AddRecipeView extends View {
       </div>
 
       <div class="upload__column">
-        <label>Ingredient 1</label>
-        <input required 
-          value="${
-            Object.entries(this._data.ingredients[0] || {})
-              .map(el => el[1] || '')
-              .join(', ') || ''
-          }"
-          type="text"
-          name="ingredient-1"
-          placeholder="Format: 'Quantity,Unit,Description'"
-        />
-        <label>Ingredient 2</label>
-        <input
-        value="${
-          Object.entries(this._data.ingredients[1] || {})
-            .map(el => el[1] || '')
-            .join(', ') || ''
-        }"
-          type="text"
-          name="ingredient-2"
-          placeholder="Format: 'Quantity,Unit,Description'"
-        />
-        <label>Ingredient 3</label>
-        <input
-          value="${
-            Object.entries(this._data.ingredients[2] || {})
-              .map(el => el[1] || '')
-              .join(', ') || ''
-          }"
-          type="text"
-          name="ingredient-3"
-          placeholder="Format: 'Quantity,Unit,Description'"
-        />
-        
-        <label>Ingredient 4</label>
-        <input
-          value="${
-            Object.entries(this._data.ingredients[3] || {})
-              .map(el => el[1] || '')
-              .join(', ') || ''
-          }"
-          type="text"
-          name="ingredient-4"
-          placeholder="Format: 'Quantity,Unit,Description'"
-        />
-        <label>Ingredient 5</label>
-        <input
-          value="${
-            Object.entries(this._data.ingredients[4] || {})
-              .map(el => el[1] || '')
-              .join(', ') || ''
-          }"
-          type="text"
-          name="ingredient-5"
-          placeholder="Format: 'Quantity,Unit,Description'"
-        />
-        <label>Ingredient 6</label>
-        <input
-          value="${
-            Object.entries(this._data.ingredients[5] || {})
-              .map(el => el[1] || '')
-              .join(', ') || ''
-          }"
-          type="text"
-          name="ingredient-6"
-          placeholder="Format: 'Quantity,Unit,Description'"
-        />
+        ${this._generateMarkupIngs()}
+        ${this._generateMarkupAddIngBtn()}
       </div>
 
       <button class="btn upload__btn">
@@ -263,6 +238,45 @@ class AddRecipeView extends View {
           <use href="${this._icons}#icon-upload-cloud"></use>
         </svg>
         <span>Upload</span>
+      </button>
+    `;
+    return markup;
+  }
+  /**Generates input fields for all the ingredients and an empty one */
+  _generateMarkupIngs(placeholder = 'Format: Quantity,Unit,Description') {
+    const ingredients = this._data.ingredients?.length
+      ? this._data.ingredients
+      : [];
+    ingredients.push({}); // Always an empty one
+
+    let markup = '';
+
+    ingredients.forEach(function (ing, i) {
+      markup += `
+        <label>Ingredient ${i + 1}</label>
+        <input 
+          ${i === 0 ? /*'required'*/ '' : ''} 
+          value="${
+            typeof ing.unit !== 'string'
+              ? ''
+              : `${ing.quantity || ''}, ${ing.unit}, ${ing.description}`
+          }"
+          type="text"
+          name="ingredient-${i + 1}"
+          placeholder="${placeholder}"
+        />
+    `;
+    });
+    return markup;
+  }
+
+  _generateMarkupAddIngBtn() {
+    return `
+      <button type="button" class="btn upload__ing--btn">
+        <svg>
+          <use href="${this._icons}#icon-plus-circle"></use>
+        </svg>
+        <span>Add Ingredient</span>
       </button>
     `;
   }
