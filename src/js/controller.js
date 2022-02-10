@@ -64,8 +64,8 @@ const controlPagination = function (page) {
   // 1. Render NEW results
   resultsView.render(model.getSearchResultsPage(page));
 
-  // 2. Render NEW pagination btns
-  paginationView.render(model.state.search);
+  // 2. Update pagination btns
+  paginationView.update(model.state.search);
 };
 
 const controlServings = function (servings) {

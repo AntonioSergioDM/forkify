@@ -34,6 +34,14 @@
         display: inline-block;
         background-color: $color-primary;
         color: $color-grey-light-1;
+        &:hover {
+          background-color: $color-grad-2;
+          color: $color-grey-light-1;
+          transform: translateY(-2px);
+        }
+      }
+      &:hover {
+        transform: translateY(-2px);
       }
     }
   }

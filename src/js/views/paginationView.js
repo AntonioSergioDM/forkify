@@ -1,3 +1,4 @@
+import { MAX_PAGE_BUTTONS } from '../config';
 import { maxOf, minOf } from '../helpers';
 import View from './View';
 
@@ -5,73 +6,90 @@ class PaginationView extends View {
   _parentElement = document.querySelector('.pagination');
 
   addHandlerClick(handler) {
-    this._parentElement.addEventListener('click', function (e) {
-      const btn = e.target.closest('.btn--inline');
-      if (!btn) return;
+    this._parentElement.addEventListener(
+      'click',
+      function (e) {
+        const btn = e.target.closest('.btn--inline');
+        if (!btn) return;
 
-      const goToPage = +btn.dataset.goto;
+        const goToPage = +btn.dataset.goto;
+        console.log(goToPage);
+        if (goToPage === this._data.page) return;
 
-      handler(goToPage);
-    });
+        handler(goToPage);
+      }.bind(this)
+    );
   }
 
   _generateMarkup() {
     // Pages Values
     const currPage = this._data.page;
-    const numPages = 10; /*Math.ceil(
+    const numPages = Math.ceil(
       this._data.results.length / this._data.resultsPerPage
-    );//*/
-    const path = this._icons;
+    );
 
-    // Button markup
-    const btnMarkup = function (
-      type = 'next',
-      goto = currPage + 1,
-      img = `${path}#icon-arrow-right`
-    ) {
-      return `
-        <button class="btn--inline pagination__btn--${type}${
-        goto === currPage && type === 'number' ? '--on-page' : ''
-      }" data-goto="${goto}">
-          ${
-            type !== 'number'
-              ? `
-          <svg class="search__icon">
-            <use href="${img}"></use>
-          </svg>`
-              : goto
-          }
-        </button>
-      `;
-    };
-
-    // rendering logic
+    ///// Rendering logic /////
     let markup = '';
 
     // Prev Page Btn - Page 2, 3, ...
-    if (currPage > 1)
-      markup += btnMarkup('prev', currPage - 1, `${path}#icon-arrow-left`);
+    markup += this._generateMarkupBtn(
+      'prev',
+      currPage - 1,
+      `icon-arrow-left`,
+      !(currPage > 1)
+    );
 
     // Page Numbers - more than one page
     if (numPages > 1) {
-      // MAx page number buttons is 7
+      // Max page number buttons is MAX_PAGE_BUTTONS
+      const maxBtns = MAX_PAGE_BUTTONS;
+      const nearBtns = Math.trunc(maxBtns / 2);
+
       const pageStart =
-        numPages > 7 && currPage > 3 ? minOf(currPage - 3, numPages - 6) : 1;
+        numPages > maxBtns && currPage > nearBtns
+          ? minOf(currPage - nearBtns, numPages - (maxBtns - 1))
+          : 1;
       const pageEnd =
-        numPages > 7 && currPage < numPages - 3
-          ? maxOf(currPage + 3, 7)
+        numPages > maxBtns && currPage < numPages - nearBtns
+          ? maxOf(currPage + nearBtns, maxBtns)
           : numPages;
 
       for (let page = pageStart; page <= pageEnd; page++) {
-        markup += btnMarkup('number', page);
+        markup += this._generateMarkupBtn('number', page);
       }
     }
 
-    // Next Page Btn - Page 1 if there are other pages, 2, ..., numPages-1
-    if (currPage < numPages && numPages > 1)
-      markup += btnMarkup('next', currPage + 1, `${path}#icon-arrow-right`);
+    // Next Page Btn - Page 1 (if there are other pages), 2, ..., numPages-1
+    markup += this._generateMarkupBtn(
+      'next',
+      currPage + 1,
+      `icon-arrow-right`,
+      !(currPage < numPages && numPages > 1)
+    );
 
     return markup;
+  }
+
+  _generateMarkupBtn(
+    type = 'next',
+    goto = this._data.page + 1,
+    img = `icon-arrow-right`,
+    hidden = false
+  ) {
+    return `
+      <button class="btn--inline pagination__btn--${type}${
+      goto === this._data.page && type === 'number' ? '--on-page' : ''
+    } ${hidden ? 'hidden' : ''}" data-goto="${goto}">
+        ${
+          type !== 'number'
+            ? `
+        <svg class="search__icon">
+          <use href="${this._icons}#${img}"></use>
+        </svg>`
+            : goto
+        }
+      </button>
+    `;
   }
 }
 
