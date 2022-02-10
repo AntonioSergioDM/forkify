@@ -16,6 +16,10 @@ export const MAX_PAGE_BUTTONS = 5; // Must be odd number
 export const RES_PER_PAGE = 10;
 
 /**
- * Time to close modal
+ * Time to close the modal or read its messages
  */
-export const MODAL_CLOSE_SEC = 1;
+export const MODAL_CLOSE_SEC = 1.5;
+/**
+ * Duration of transition - 0.5s
+ */
+export const ANIM_DUR_SEC = 0.51;

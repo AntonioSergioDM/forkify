@@ -47,6 +47,10 @@ body {
   min-height: calc(100vh - 2 * 4vw);
 }
 
+a {
+  color: $color-grey-dark-1;
+}
+
 .container {
   max-width: 120rem;
   min-height: 117rem;

@@ -75,3 +75,12 @@ export const maxOf = function (...arr) {
 export const minOf = function (...arr) {
   return arr.reduce((min, val) => (min < val ? min : val));
 };
+
+export const isUrl = str => {
+  try {
+    new URL(str);
+    return true;
+  } catch (_) {
+    return false;
+  }
+};
