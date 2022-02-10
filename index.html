@@ -111,10 +111,11 @@
     <div class="add-recipe-window hidden">
       <button class="btn--close-modal">&times;</button>
       <form class="upload">
+        <h3 class="upload__heading">Recipe data</h3>
+        <h3 class="upload__heading">Ingredients</h3>
         <div class="upload__column">
-          <h3 class="upload__heading">Recipe data</h3>
           <label>Title</label>
-          <input required name="title" type="text" />
+          <input required name="title" type="text" placeholder="My Recipe" />
           <label>URL</label>
           <input
             required
@@ -130,7 +131,12 @@
             placeholder="https://forkify-antoniosergio.netlify.app/logo.8a7af738.png"
           />
           <label>Publisher</label>
-          <input required name="publisher" type="text" />
+          <input
+            required
+            name="publisher"
+            type="text"
+            placeholder="Myself and I"
+          />
           <label>Prep time</label>
           <input
             required
@@ -148,7 +154,6 @@
         </div>
 
         <div class="upload__column">
-          <h3 class="upload__heading">Ingredients</h3>
           <label>Ingredient 1</label>
           <input
             type="text"

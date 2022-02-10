@@ -63,11 +63,9 @@ class AddRecipeView extends View {
       this._data.err =
         'The title is too short! <br> Give the recipe a decent name ;)';
     else if (!isUrl(this._data.sourceUrl))
-      this._data.err =
-        'Invalid URL! <br> Try copying it from the browser <br> E.g.:<br> <a href="https://forkify-antoniosergio.netlify.app" target=”_blank”>https://forkify-antoniosergio.netlify.app</a>';
+      this._data.err = 'Invalid URL! <br> Try copying it from the browser ;)';
     else if (!isUrl(this._data.image))
-      this._data.err =
-        'Invalid Image URL! <br> E.g.:<br> <a href="	https://forkify-antoniosergio.netlify.app/logo.8a7af738.png" target=”_blank”>	https://forkify-antoniosergio.netlify.app/logo.8a7af738.png</a>';
+      this._data.err = 'Invalid Image URL! <br> Make sure is an image ;)';
     else if (this._data.publisher.length < 2)
       this._data.err = 'A publisher with less than 3 letters? Really?';
     else if (this._data.cookingTime < 1)
@@ -98,7 +96,7 @@ class AddRecipeView extends View {
         const ingArr = ing[1].split(',').map(el => el.trim());
         if (ingArr.length !== 3) {
           data.err =
-            'Wrong ingredient format! Please use the correct format :)<br> Format:<br>Quantity, Unit, Description';
+            'Wrong ingredient format! <br> Format: <br> Quantity, Unit, Description';
           return;
         }
 
@@ -136,14 +134,18 @@ class AddRecipeView extends View {
 
   _generateMarkup() {
     return `
+    
+    <h3 class="upload__heading">Recipe data</h3>
+    <h3 class="upload__heading">Ingredients</h3>
     <div class="upload__column">
-        <h3 class="upload__heading">Recipe data</h3>
         <label>Title</label>
         <input 
           required 
           value="${this._data.title || ''}" 
           name="title" 
-          type="text" />
+          type="text" 
+          placeholder="My Recipe"
+        />
         <label>URL</label>
         <input 
           required 
@@ -166,6 +168,7 @@ class AddRecipeView extends View {
           value="${this._data.publisher || ''}" 
           name="publisher" 
           type="text" 
+          placeholder="Myself and I"
         />
         <label>Prep time</label>
         <input 
@@ -186,7 +189,6 @@ class AddRecipeView extends View {
       </div>
 
       <div class="upload__column">
-        <h3 class="upload__heading">Ingredients</h3>
         <label>Ingredient 1</label>
         <input required 
           value="${
