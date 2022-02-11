@@ -40,22 +40,24 @@ class AddRecipeView extends View {
 
         this._getData();
 
-        const ingList = e.target.closest('.upload__column');
+        const isInvalid = this._data.err || !this._data.ingredients.length;
+
+        const ingList = e.target.closest('.upload__column-ing-list');
 
         ingList.innerHTML = '';
         ingList.insertAdjacentHTML(
           'afterbegin',
           `
-      ${
-        this._data.err
-          ? this._generateMarkupIngs('Incorrect Format')
-          : this._generateMarkupIngs()
-      } 
-      ${this._generateMarkupAddIngBtn()}
-      `
+          ${
+            isInvalid
+              ? this._generateMarkupIngs(true)
+              : this._generateMarkupIngs()
+          } 
+          ${this._generateMarkupAddIngBtn()}
+          `
         );
 
-        if (this._data.err) {
+        if (isInvalid) {
           this._getData();
           setTimeout(
             function () {
@@ -64,6 +66,11 @@ class AddRecipeView extends View {
             MODAL_CLOSE_SEC * 1000
           );
         }
+
+        // focus on last ingredient input
+        ingList
+          .querySelector(`[name="quantity-${this._data.ingredients.length}"]`)
+          .focus();
       }.bind(this)
     );
   }
@@ -114,7 +121,7 @@ class AddRecipeView extends View {
     else if (this._data.servings < 1)
       this._data.err =
         "Servings must be positive!<br>You can't serve negative people!";
-    else if (this._data.ingredients.length === 0)
+    else if (!this._data.ingredients.length)
       this._data.err = "You can't cook without ingredients!";
     else return true;
 
@@ -122,6 +129,18 @@ class AddRecipeView extends View {
   }
 
   _getData() {
+    const getAllEntries = function (dataArr, value) {
+      const quantities = {};
+      dataArr
+        .filter(entry => entry[0].startsWith(value))
+        .forEach(entry => {
+          const id = entry[0].split('-')[1];
+          const qt = entry[1];
+          quantities[id] = qt;
+        });
+      return quantities;
+    };
+
     const dataArr = [...new FormData(this._parentElement)];
     const data = Object.fromEntries(dataArr);
 
@@ -129,24 +148,32 @@ class AddRecipeView extends View {
     data.cookingTime = +data.cookingTime;
     data.servings = +data.servings;
 
-    data.ingredients = [];
-    dataArr
-      .filter(entry => entry[0].startsWith('ingredient') && entry[1])
-      .forEach(ing => {
-        const ingArr = ing[1].split(',').map(el => el.trim());
-        if (ingArr.length !== 3) {
-          data.err =
-            'Wrong ingredient format! <br> Format: <br> Quantity, Unit, Description';
-          return;
-        }
+    // Ingredients properties
+    const quantities = getAllEntries(dataArr, 'quantity');
+    const units = getAllEntries(dataArr, 'unit');
+    const descriptions = getAllEntries(dataArr, 'description');
 
-        const [quantity = null, unit, description] = ingArr;
-        data.ingredients.push({
-          quantity: +quantity ? +quantity : null,
-          unit,
-          description,
-        });
-      });
+    data.ingredients = [];
+    Object.keys(quantities).forEach(ing => {
+      let quantity = +quantities[ing] || null;
+      const unit = units[ing];
+      const description = descriptions[ing];
+
+      // Don't read empty inputs
+      if (!(quantity || unit || description)) return;
+
+      if (quantity && quantity < 0) {
+        data.err = "You can't cook with negative ingredients!";
+        return;
+      }
+
+      if (!description) {
+        data.err = 'You forgot to name the ingredient :)';
+        return;
+      }
+
+      data.ingredients.push({ quantity, unit, description });
+    });
 
     this._data = data;
     return this;
@@ -179,48 +206,42 @@ class AddRecipeView extends View {
     <h3 class="upload__heading">Ingredients</h3>
     <div class="upload__column">
         <label>Title</label>
-        <input 
-          required 
+        <input  
           value="${this._data.title || ''}" 
           name="title" 
           type="text" 
           placeholder="My Recipe"
         />
         <label>URL</label>
-        <input 
-          required 
+        <input  
           value="${this._data.sourceUrl || ''}" 
           name="sourceUrl" 
           type="text" 
           placeholder="https://forkify-antoniosergio.netlify.app/"
         />
         <label>Image URL</label>
-        <input 
-          required 
+        <input  
           value="${this._data.image || ''}" 
           name="image" 
           type="text" 
           placeholder="https://forkify-antoniosergio.netlify.app/logo.8a7af738.png" 
         />
         <label>Publisher</label>
-        <input 
-          required 
+        <input  
           value="${this._data.publisher || ''}" 
           name="publisher" 
           type="text" 
           placeholder="Myself and I"
         />
         <label>Prep time</label>
-        <input 
-          required 
+        <input  
           value="${this._data.cookingTime || ''}" 
           name="cookingTime" 
           type="number" 
           placeholder="in minutes"
         />
         <label>Servings</label>
-        <input 
-          required 
+        <input  
           value="${this._data.servings || ''}" 
           name="servings" 
           type="number"
@@ -228,7 +249,7 @@ class AddRecipeView extends View {
         />
       </div>
 
-      <div class="upload__column">
+      <div class="upload__column-ing-list">
         ${this._generateMarkupIngs()}
         ${this._generateMarkupAddIngBtn()}
       </div>
@@ -243,7 +264,7 @@ class AddRecipeView extends View {
     return markup;
   }
   /**Generates input fields for all the ingredients and an empty one */
-  _generateMarkupIngs(placeholder = 'Format: Quantity,Unit,Description') {
+  _generateMarkupIngs(warning = false) {
     const ingredients = this._data.ingredients?.length
       ? this._data.ingredients
       : [];
@@ -255,15 +276,22 @@ class AddRecipeView extends View {
       markup += `
         <label>Ingredient ${i + 1}</label>
         <input 
-          ${i === 0 ? /*'required'*/ '' : ''} 
-          value="${
-            typeof ing.unit !== 'string'
-              ? ''
-              : `${ing.quantity || ''}, ${ing.unit}, ${ing.description}`
-          }"
+          value="${ing.quantity || ''}"
+          type="number"
+          name="quantity-${i + 1}"
+          placeholder="${warning ? '1' : 'Qnt'}"
+        />
+        <input 
+          value="${ing.unit || ''}"
           type="text"
-          name="ingredient-${i + 1}"
-          placeholder="${placeholder}"
+          name="unit-${i + 1}"
+          placeholder="${warning ? 'Unit?' : 'Unit'}"
+        />
+        <input 
+          value="${ing.description || ''}"
+          type="text"
+          name="description-${i + 1}"
+          placeholder="${warning ? 'Ingredient name' : 'Description'}"
         />
     `;
     });
