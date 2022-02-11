@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="src/sass/main.scss" />
     <script defer type="module" src="src/js/controller.js"></script>
 
-    <title>forkify // Search over 1,000,000 recipes</title>
+    <title>forkify - Search over 1 000 000 recipes</title>
   </head>
 
   <body>
@@ -37,6 +37,31 @@
         <nav class="nav">
           <ul class="nav__list">
             <li class="nav__item">
+              <button class="nav__btn nav__btn--bookmarks">
+                <svg class="nav__icon">
+                  <use href="src/img/icons.svg#icon-cart"></use>
+                </svg>
+                <span>Shopping List</span>
+              </button>
+              <div class="bookmarks">
+                <ul class="shopping__list">
+                  <!-- generated code starts here - replaces message div -->
+                  <div class="message">
+                    <div>
+                      <svg>
+                        <use href="src/img/icons.svg#icon-smile"></use>
+                      </svg>
+                    </div>
+                    <p>
+                      No ingredients yet. Find a nice recipe and add its
+                      ingredients ;)
+                    </p>
+                  </div>
+                  <!-- generated code end -->
+                </ul>
+              </div>
+            </li>
+            <li class="nav__item">
               <button class="nav__btn nav__btn--add-recipe">
                 <svg class="nav__icon">
                   <use href="src/img/icons.svg#icon-edit"></use>
@@ -53,7 +78,7 @@
               </button>
               <div class="bookmarks">
                 <ul class="bookmarks__list">
-                  <!-- generated code start - replaces message div -->
+                  <!-- generated code starts here - replaces message div -->
                   <div class="message">
                     <div>
                       <svg>
@@ -82,14 +107,19 @@
         </div>
 
         <p class="copyright">
-          &copy; Copyright by
+          &copy; Design by
           <a
             class="twitter-link"
             target="_blank"
             href="https://twitter.com/jonasschmedtman"
             >Jonas Schmedtmann</a
-          >. Use for learning or your portfolio. Don't use to teach. Don't claim
-          as your own.
+          >. Implemented by
+          <a
+            class="twitter-link"
+            target="_blank"
+            href="https://www.linkedin.com/in/antónio-sérgio-dias-morais-973296207"
+            >Antonio Sergio</a
+          >.
         </p>
       </div>
 

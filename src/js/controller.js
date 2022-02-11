@@ -13,6 +13,7 @@ import addRecipeView from './views/addRecipeView';
 
 // import constants
 import { MODAL_CLOSE_SEC } from './config';
+import shoppingView from './views/shoppingView';
 
 ///////////////////////////////////////
 
@@ -30,7 +31,7 @@ const controlRecipes = async function () {
     recipeView.renderSpinner();
 
     await model.loadRecipe(id);
-
+    console.log(model.state.recipe);
     // 2. Render the recipe
     recipeView.render(model.state.recipe);
   } catch (err) {
@@ -38,10 +39,10 @@ const controlRecipes = async function () {
   }
 };
 
-const controlSearchResults = async function () {
+const controlSearchResults = async function (ing = '') {
   try {
     // 1. Get search query
-    const query = searchView.getQuery();
+    const query = ing || searchView.getQuery();
     if (!query) return;
 
     resultsView.renderSpinner();
@@ -89,6 +90,30 @@ const controlAddBookmark = function () {
   bookmarksView.render(model.state.bookmarks);
 };
 
+const controlAddIngredients = function (index) {
+  // 1. Add/Remove Ingredients
+  if (model.state.recipe.ingredients[index].inCart)
+    model.deleteShoppingList(model.state.recipe.ingredients[index]);
+  else model.addShoppingList(model.state.recipe.ingredients[index]);
+
+  // 2. Update recipe view
+  recipeView.update(model.state.recipe);
+
+  // 3. Render shopping list view
+  shoppingView.render(model.state.shoppingList);
+};
+
+const controlDelIng = function (id) {
+  // 1. Delete ingredient from list
+  model.deleteShoppingList(id);
+
+  // 2. Render the list
+  shoppingView.render(model.state.shoppingList);
+
+  // 3. Update the recipe view
+  recipeView.update(model.state.recipe);
+};
+
 const controlAddRecipe = async function (newRecipe) {
   try {
     // Show spinner
@@ -128,12 +153,20 @@ const init = function () {
   recipeView.addHandlerRender(controlRecipes);
   recipeView.addHandlerUpdateServings(controlServings);
   recipeView.addHandlerAddBookmark(controlAddBookmark);
+  recipeView.addHandlerAddIngredients(controlAddIngredients);
+
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerClick(controlPagination);
+
   addRecipeView.addHandlerUpload(controlAddRecipe);
 
-  // Render Bookmarks locally storaged
+  shoppingView.addHandlersIng(controlSearchResults, controlDelIng);
+
+  // Render Bookmarks & Shopping List locally storaged
   bookmarksView.render(model.state.bookmarks);
+  shoppingView.render(model.state.shoppingList);
+
+  // Render hidden addRecipe form
   addRecipeView.render();
 };
 init();

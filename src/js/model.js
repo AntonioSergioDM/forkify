@@ -1,3 +1,4 @@
+import { v4 as uuid } from 'uuid';
 import { API_KEY, API_URL, RES_PER_PAGE } from './config';
 import { AJAX } from './helpers';
 
@@ -14,12 +15,13 @@ export const state = {
     page: 1,
   },
   bookmarks: [],
+  shoppingList: [],
 };
 
 const createRecipeObject = function (data) {
   const { recipe } = data.data;
 
-  return {
+  const newRecipe = {
     id: recipe.id,
     title: recipe.title,
     publisher: recipe.publisher,
@@ -31,6 +33,12 @@ const createRecipeObject = function (data) {
     bookmarked: state.bookmarks.some(book => book.id === recipe.id),
     ...(recipe.key && { key: recipe.key }),
   };
+  newRecipe.ingredients.forEach(ing => {
+    if (state.shoppingList.some(ingList => isIngEqual(ing, ingList)))
+      ing.inCart = true;
+  });
+
+  return newRecipe;
 };
 
 export const loadRecipe = async function (id) {
@@ -84,8 +92,8 @@ export const updateServings = function (servings) {
   state.recipe.servings = servings;
 };
 
-const persistBookmarks = function () {
-  localStorage.setItem('bookmarks', JSON.stringify(state.bookmarks));
+const persistData = function (dataName) {
+  localStorage.setItem(dataName, JSON.stringify(state[dataName]));
 };
 
 export const addBookmark = function (recipe) {
@@ -100,7 +108,7 @@ export const addBookmark = function (recipe) {
   });
 
   // 3. Persist data
-  persistBookmarks();
+  persistData('bookmarks');
 };
 
 export const deleteBookmark = function (id) {
@@ -116,7 +124,59 @@ export const deleteBookmark = function (id) {
   });
 
   // 3. Persist data
-  persistBookmarks();
+  persistData('bookmarks');
+};
+
+const isIngEqual = function (ing1, ing2) {
+  return ing1.description === ing2.description;
+};
+
+export const addShoppingList = function (ing) {
+  let indexShop = state.shoppingList.findIndex(listIng =>
+    isIngEqual(listIng, ing)
+  );
+  const indexRecipe = state.recipe.ingredients.findIndex(recipeIng =>
+    isIngEqual(recipeIng, ing)
+  );
+
+  // 1. Add to shopping list
+  if (indexShop < 0) {
+    indexShop =
+      state.shoppingList.push({
+        ...ing,
+        id: uuid(),
+        image: state.recipe.image,
+        title: state.recipe.title,
+      }) - 1;
+  } else if (
+    (ing.title || state.recipe.title) !== state.shoppingList[indexShop].title
+  )
+    state.shoppingList[indexShop].title = `${
+      state.shoppingList[indexShop].title
+    } | ${ing.title || state.recipe.title}`;
+
+  // Flag in the recipe
+  if (indexRecipe >= 0) state.recipe.ingredients[indexRecipe].inCart = true;
+
+  // 2. Persist data
+  persistData('shoppingList');
+};
+
+export const deleteShoppingList = function (idOrIng) {
+  let index;
+  // 1. Delete recipe ing
+  if (typeof idOrIng !== 'string')
+    index = state.shoppingList.findIndex(ing => isIngEqual(ing, idOrIng));
+  else index = state.shoppingList.findIndex(ing => ing.id === idOrIng);
+  const [ingRemoved] = state.shoppingList.splice(index, 1);
+
+  // 2. Remove tag if in recipe
+  state.recipe.ingredients.forEach(ing => {
+    if (isIngEqual(ing, ingRemoved)) ing.inCart = false;
+  });
+
+  // 3. Persist data
+  persistData('shoppingList');
 };
 
 export const uploadRecipe = async function (newRecipe) {
@@ -140,14 +200,20 @@ export const uploadRecipe = async function (newRecipe) {
   }
 };
 
+const loadData = function (dataName) {
+  const storage = localStorage.getItem(dataName);
+  if (storage) state[dataName] = JSON.parse(storage);
+};
+
 const init = function () {
-  const storage = localStorage.getItem('bookmarks');
-  if (storage) state.bookmarks = JSON.parse(storage);
+  loadData('bookmarks');
+  loadData('shoppingList');
 };
 init();
 
 //For Development
-const clearBookmarks = function () {
-  localStorage.clear('boomarks');
+const clearData = function (dataName) {
+  localStorage.clear(dataName);
 };
-// clearBookmarks();
+// clearData('bookmarks);
+// clearData('shoppingList');

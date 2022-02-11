@@ -30,6 +30,15 @@ class RecipeView extends View {
     });
   }
 
+  addHandlerAddIngredients(handler) {
+    this._parentElement.addEventListener('click', function (e) {
+      const btn = e.target.closest('.btn--cart');
+      if (!btn) return;
+
+      handler(btn.dataset.index);
+    });
+  }
+
   _generateMarkup() {
     return `
     <figure class="recipe__fig">
@@ -87,7 +96,8 @@ class RecipeView extends View {
         <svg class="">
           <use href="${this._icons}#icon-bookmark${
       this._data.bookmarked ? '-fill' : ''
-    }"></use>
+    } 
+          "></use>
         </svg>
       </button>
     </div>
@@ -96,7 +106,7 @@ class RecipeView extends View {
       <h2 class="heading--2">Recipe ingredients</h2>
       <ul class="recipe__ingredient-list">
         ${this._data.ingredients
-          .map(this._generateMArkupIngredient.bind(this))
+          .map(this._generateMarkupIngredient.bind(this))
           .join('')}
       </ul>
     </div>
@@ -123,11 +133,19 @@ class RecipeView extends View {
     </div>
 `;
   }
-  _generateMArkupIngredient(ing) {
+  _generateMarkupIngredient(ing, index) {
+    console.log(ing);
     return `
       <li class="recipe__ingredient">
-        <svg class="recipe__icon">
-          <use href="${this._icons}#icon-check"></use>
+        <svg 
+          class="recipe__icon btn--cart" 
+          data-index="${index}" 
+          style="cursor:pointer;"
+        >
+          <use 
+            class="${ing.inCart ? 'check' : 'cart'}" 
+            href="${this._icons}#icon-${ing.inCart ? 'check' : 'cart'}">
+          </use>
         </svg>
         <div class="recipe__quantity">${
           ing.quantity ? numberToFraction(ing.quantity) : ''
